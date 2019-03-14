@@ -4,9 +4,10 @@
   "description": "Check map title Check map description \tif both === \"\": \t\tdo not save map Save group #, map title, map description, array of marker coordinates",
   "main": "zeemaps.js",
   "scripts": {
-    "ztest": "node ZeeMapsTest.js"
+    "ztest": "node ZeeMapsTest.js",
+    "ptest": "node ParallelStream.js"
   },
-  "author": "",
+  "author": "Tiger Mou",
   "license": "ISC",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",

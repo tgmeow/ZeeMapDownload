@@ -1,9 +1,9 @@
-var rp = require("request-promise");
+const rp = require("request-promise");
 const cheerio = require("cheerio");
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
 const csvWriter = createCsvWriter({
-  path: "output.txt",
+  path: "output.csv",
   header: [
     { id: "map_title", title: "MAP_TITLE" },
     { id: "email", title: "EMAIL" },
@@ -11,13 +11,12 @@ const csvWriter = createCsvWriter({
     { id: "m_name", title: "M_NAME" },
     { id: "m_address", title: "M_ADDRESS" },
     { id: "m_country", title: "M_COUNTRY" },
-    { id: "m_long", title: "M_LONGITUDE" },
-    { id: "m_lat", title: "M_LATITUDE" }
+    { id: "m_coords", title: "M_COORDINATES" }
   ]
 });
 
 /**
- * Download markers as array of JSON
+ * Download markers and page and writes into CSV
  * @param group
  * @returns {Promise<void>}
  */
@@ -40,8 +39,7 @@ async function getPage(group) {
           m_name: all_markers.map(item => item["ov"]),
           m_address: all_markers.map(item => item["a"]),
           m_country: all_markers.map(item => item["cty"]),
-          m_long: all_markers.map(item => item["lng"]),
-          m_lat: all_markers.map(item => item["lat"])
+          m_coords: all_markers.map(item => [item["lng"], item["lat"]])
         }
       ];
     })
