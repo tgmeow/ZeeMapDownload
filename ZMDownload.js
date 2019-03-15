@@ -1,3 +1,4 @@
+"use strict";
 /**
  * Class for managing Zeemaps downloads. Provides function getPage which
  * downloads and writes to csv using a single instance of csv-writer
@@ -7,6 +8,18 @@ module.exports = class ZMDownload {
   constructor(filename) {
     this.rp = require("request-promise");
     this.cheerio = require("cheerio");
+    this.winston = require("winston");
+    this.logger = this.winston.createLogger({
+      levels: this.winston.config.syslog.levels,
+      transports: [
+        new this.winston.transports.Console({ level: "error" }),
+        new this.winston.transports.File({
+          filename: "error.log",
+          level: "info"
+        })
+      ]
+    });
+
     this.createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
     this.csvWriter = this.createCsvWriter({
@@ -25,10 +38,15 @@ module.exports = class ZMDownload {
     });
   }
 
+  log(level, message) {
+    this.logger.log(level, message);
+  }
+
   /**
-   * Download markers and page and writes into CSV
-   * @param group
-   * @returns {Promise<void>}
+   * Downloads the data for the ZeeMap of id group and saves to a csv file on
+   * success. Does nothing if the map does not exist or is private.
+   * @param group id of the map
+   * @returns {Promise<undefined>} Resolved promise with undefined
    */
   getPage(group) {
     const PAGE_URL = "https://www.zeemaps.com/map/settings?group=" + group;
@@ -40,22 +58,35 @@ module.exports = class ZMDownload {
     return Promise.all([page, markers])
       .then(values => {
         const $ = this.cheerio.load(values[0]);
-        let all_markers = JSON.parse(values[1]);
+        let all_m = JSON.parse(values[1]);
         const data = {
           group: group,
-          map_title: $("input[name='name']").attr("value"),
-          email: $("input[name='email']").attr("value"),
-          description: $("textarea[name='description']").html(),
-          m_name: all_markers.map(item => item["ov"]),
-          m_address: all_markers.map(item => item["a"]),
-          m_country: all_markers.map(item => item["cty"]),
-          m_coords: all_markers.map(item => [item["lng"], item["lat"]])
+          map_title: $("input[name='name']")
+            .attr("value")
+            .replace(/[\n\r]/g, " "),
+          email: $("input[name='email']")
+            .attr("value")
+            .replace(/[\n\r]/g, " "),
+          description: $("textarea[name='description']")
+            .html()
+            .replace(/[\n\r]/g, "; "),
+          m_name: all_m.map(item =>
+            "ov" in item ? item["ov"].replace(/[\n\r]/g, " ") : ""
+          ),
+          m_address: all_m.map(item =>
+            "a" in item ? item["a"].replace(/[\n\r]/g, " ") : ""
+          ),
+          m_country: all_m.map(item =>
+            "cty" in item ? item["cty"].replace(/[\n\r]/g, "") : ""
+          ),
+          m_coords: all_m.map(item => [item["lng"], item["lat"]])
         };
+
         if (
           data.map_title !== "" ||
           data.email !== "" ||
           data.description !== "" ||
-          all_markers.length !== 0
+          all_m.length !== 0
         ) {
           return this.csvWriter.writeRecords([data]);
         }
@@ -65,7 +96,10 @@ module.exports = class ZMDownload {
           // Map is private.
           // Unable to view markers although can view title and email
         } else {
-          console.log("ERR: Failed to save group " + group + ". Error: " + err);
+          this.logger.log(
+            "error",
+            "ERR: Failed to save group " + group + ". Error: " + err
+          );
         }
       });
   }

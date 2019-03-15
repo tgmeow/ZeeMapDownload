@@ -2,4 +2,6 @@
 .ipynb_checkpoints/*
 node_modules/*
 Untitled.ipynb
-output.csv
+TestBench.js
+*.csv
+*.log
