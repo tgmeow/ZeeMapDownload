@@ -5,7 +5,8 @@
   "main": "zeemaps.js",
   "scripts": {
     "ztest": "node ZeeMapsTest.js",
-    "ptest": "node ParallelStream.js"
+    "ptest": "node ParallelStream.js",
+    "zmaps": "node zeemaps.js"
   },
   "author": "Tiger Mou",
   "license": "ISC",

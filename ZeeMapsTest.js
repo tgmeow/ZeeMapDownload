@@ -20,7 +20,7 @@ const csvWriter = createCsvWriter({
  * @param group
  * @returns {Promise<void>}
  */
-async function getPage(group) {
+function getPage(group) {
   const PAGE_URL = "https://www.zeemaps.com/map/settings?group=" + group;
   const MARKER_URL = "https://www.zeemaps.com/emarkers?g=" + group;
 
@@ -44,11 +44,13 @@ async function getPage(group) {
       ];
     })
     .then(data => {
-      csvWriter.writeRecords(data);
+      return csvWriter.writeRecords(data);
     })
     .catch(err => {
       console.log("Failed to save group " + group + ". Error: " + err);
     });
 }
 
-getPage(1020541);
+getPage(1020541).then(() => {
+  console.log("done.");
+});
