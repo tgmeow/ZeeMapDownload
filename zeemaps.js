@@ -8,7 +8,8 @@ let curr_group = 1;
 const MAX_GROUP = 3355100;
 // const MAX_GROUP = 5000;
 const CONCUR = 2;
-const PRINT_MODULO = 1000;
+const DELAY = 500;
+const PRINT_MODULO = 20;
 
 /**
  * Run the main task, ZM.getPage(), which then returns a promise.
@@ -27,12 +28,24 @@ function task() {
 }
 
 /**
+ * Wait for specified number of ms, returns a resolved promise.
+ * @param ms
+ * @returns {Promise<any>}
+ */
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
  * 'Recursively' runs task() using Promises which go into microtasks event queue
  * @returns {Promise<undefined>} Resolved
  */
 function start() {
   return task()
-    .then(() => start())
+    .then(async () => {
+      await wait(DELAY);
+      return start();
+    })
     .catch(err => {
       if (err !== MAX_GROUP) {
         ZM.log("error", "ERR: " + err);
