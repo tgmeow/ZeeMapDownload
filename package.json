@@ -1,7 +1,7 @@
 {
   "name": "zeemaps",
   "version": "1.0.0",
-  "description": "Check map title Check map description \tif both === \"\": \t\tdo not save map Save group #, map title, map description, array of marker coordinates",
+  "description": "Script in Javascript (Node) to download ZeeMaps data",
   "main": "zeemaps.js",
   "scripts": {
     "ztest": "node ZeeMapsTest.js",
@@ -9,7 +9,11 @@
     "zmaps": "node zeemaps.js"
   },
   "author": "Tiger Mou",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tgmeow/ZeeMapDownload.git"
+  },
+  "license": "MIT",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
     "csv-writer": "^1.2.0",

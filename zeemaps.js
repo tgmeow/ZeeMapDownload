@@ -7,8 +7,8 @@ let ZM = new ZMDownload("output.csv");
 let curr_group = 1;
 const MAX_GROUP = 3355100;
 // const MAX_GROUP = 5000;
-const CONCUR = 300;
-const PRINT_MODULO = 3000;
+const CONCUR = 2;
+const PRINT_MODULO = 1000;
 
 /**
  * Run the main task, ZM.getPage(), which then returns a promise.
@@ -21,6 +21,7 @@ function task() {
   }
   if (curr_group % PRINT_MODULO === 0) {
     ZM.log("info", "group: " + curr_group);
+    ZM.log("info", "time: " + (Date.now() - startTime));
   }
   return ZM.getPage(curr_group++);
 }
@@ -40,6 +41,7 @@ function start() {
 }
 
 ZM.log("info", "starting...");
+let startTime = Date.now();
 // Create an array of Promises. Similar to multi-threading PIDs
 let syncs = [];
 for (let i = 0; i < CONCUR; ++i) {
