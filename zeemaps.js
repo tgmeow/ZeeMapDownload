@@ -17,12 +17,16 @@ const PRINT_MODULO = 100;
  * negative. Otherwise returns the result of ZM.getPage() (Resolved undefined)
  */
 async function task(id) {
+  ++counts[id];
   if (curr_group >= MAX_GROUP || curr_group < 0) {
     return Promise.reject(curr_group);
   }
   if (curr_group % PRINT_MODULO === 0) {
     ZM.log("info", "group: " + curr_group);
-    ZM.log("info", id + " time: " + (Date.now() - startTime));
+    ZM.log("info", "time: " + (Date.now() - startTime));
+  }
+  if (counts[id] % PRINT_MODULO === 0) {
+    ZM.log("info", "id: " + id + " count: " + counts[id]);
   }
   return ZM.getPage(curr_group++);
 }
@@ -58,6 +62,7 @@ ZM.log("info", "starting...");
 let startTime = Date.now();
 // Create an array of Promises. Similar to multi-threading PIDs
 let syncs = [];
+let counts = Array(CONCUR).fill(0);
 for (let i = 0; i < CONCUR; ++i) {
   syncs.push(start(i)); // push is very fast, negligible diff with pre-allocating
 }
