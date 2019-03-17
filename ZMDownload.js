@@ -48,7 +48,7 @@ module.exports = class ZMDownload {
    * @param group id of the map
    * @returns {Promise<undefined>} Resolved promise with undefined
    */
-  getPage(group) {
+  async getPage(group) {
     const PAGE_URL = "https://www.zeemaps.com/map/settings?group=" + group;
     const MARKER_URL = "https://www.zeemaps.com/emarkers?g=" + group;
 
