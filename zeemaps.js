@@ -5,11 +5,11 @@ const ZMDownload = require("./ZMDownload.js");
 let ZM = new ZMDownload("output.csv");
 
 let curr_group = 1;
-const MAX_GROUP = 3355100;
-// const MAX_GROUP = 5000;
+// const MAX_GROUP = 3355100;
+const MAX_GROUP = 1000;
 const CONCUR = 2;
 const DELAY = 500;
-const PRINT_MODULO = 100;
+const PRINT_MODULO = 10;
 
 /**
  * Run the main task, ZM.getPage(), which then returns a promise.
@@ -22,13 +22,14 @@ async function task(id) {
     return Promise.reject(curr_group);
   }
   if (curr_group % PRINT_MODULO === 0) {
-    ZM.log("info", "group: " + curr_group);
     ZM.log("info", "time: " + (Date.now() - startTime));
+    ZM.log("info", "group: " + curr_group);
   }
   if (counts[id] % PRINT_MODULO === 0) {
+    ZM.log("info", "time: " + (Date.now() - startTime));
     ZM.log("info", "id: " + id + " count: " + counts[id]);
   }
-  return ZM.getPage(curr_group++);
+  return await ZM.getPage(curr_group++);
 }
 
 /**
@@ -49,12 +50,13 @@ async function start(id) {
     .then(async () => {
       // return wait(DELAY).then( () => start()); // ?
       await wait(DELAY);
-      return start(id);
+      return await start(id);
     })
     .catch(err => {
       if (err !== MAX_GROUP) {
         ZM.log("error", "ERR: " + err);
       }
+      return Promise.resolve();
     });
 }
 

@@ -55,7 +55,7 @@ module.exports = class ZMDownload {
     let page = this.rp(PAGE_URL);
     let markers = this.rp(MARKER_URL);
 
-    return Promise.all([page, markers])
+    return await Promise.all([page, markers])
       .then(values => {
         const $ = this.cheerio.load(values[0]);
         let all_m = JSON.parse(values[1]);
@@ -90,6 +90,7 @@ module.exports = class ZMDownload {
         ) {
           return this.csvWriter.writeRecords([data]);
         }
+        return Promise.resolve(); // should happen by default but idk bug somewhere
       })
       .catch(err => {
         if ("statusCode" in err && err.statusCode === 403) {
@@ -101,6 +102,7 @@ module.exports = class ZMDownload {
             "ERR: Failed to save group " + group + ". Error: " + err
           );
         }
+        return Promise.resolve(); // should happen by default but idk bug somewhere
       });
   }
 };
