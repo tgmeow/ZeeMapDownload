@@ -1,6 +1,6 @@
 "use strict";
 
-import {promiseTimeout, promiseWait} from "./timeout-promise";
+import { promiseTimeout, promiseWait } from "./timeout-promise";
 import ZMDownload from "./ZMDownload";
 
 const VERBOSE_LOG = true; // TODO
@@ -8,12 +8,12 @@ const VERBOSE_LOG = true; // TODO
 const ZM = new ZMDownload("output.csv", VERBOSE_LOG);
 
 let currGroup = 1;
-// const MAX_GROUP = 3355100;
-const MAX_GROUP = 10;
+const MAX_GROUP = 3355100;
+// const MAX_GROUP = 10;
 const CONCUR = 2;
-const DELAY = 500;
+const DELAY = 600;
 const TASK_TIMEOUT = 30 * 1000; // If task does not complete within 30 sec, skip
-const PRINT_MODULO = 10;
+const PRINT_MODULO = 1000;
 
 /**
  * Run the main task, ZM.getPage(), which then returns a promise.
@@ -27,17 +27,16 @@ async function task(id: number): Promise<number> {
     return Promise.reject(currGroup);
   }
   if (currGroup % PRINT_MODULO === 0) {
-    ZM.log("info", `time: ${(Date.now() - startTime)}`);
+    ZM.log("info", `time: ${Date.now() - startTime}`);
     ZM.log("info", `group: ${currGroup}`);
   }
   if (counts[id] % PRINT_MODULO === 0) {
-    ZM.log("info", `time: ${(Date.now() - startTime)}`);
+    ZM.log("info", `time: ${Date.now() - startTime}`);
     ZM.log("info", `id: ${id} count: ${counts[id]}`);
   }
   // if (VERBOSE_LOG) ZM.log("info", "AWAITING ZM.GETPAGE FOR: " + currGroup);
   return promiseTimeout(TASK_TIMEOUT, currGroup, ZM.getPage(currGroup++));
 }
-
 
 /**
  * 'Recursively' runs task() using Promises which go into microtasks event queue
@@ -50,7 +49,7 @@ async function start(id: number): Promise<void> {
       await promiseWait(DELAY);
       return start(id);
     })
-    .catch((err) => {
+    .catch(err => {
       if (err !== MAX_GROUP) {
         ZM.log("error", `ERR: ${err}`);
       }
@@ -90,6 +89,6 @@ Promise.all(syncs)
   .then(() => {
     ZM.log("info", "done!");
   })
-  .catch((err) => {
+  .catch(err => {
     ZM.log("error", `ERR PROMISE ALL: ${err}`);
   });

@@ -2,11 +2,16 @@
 
 /**
  * Run a Promise that times out in ms milliseconds
+ * Big thanks to https://italonascimento.github.io/applying-a-timeout-to-your-promises/
  * @param ms
  * @param id
  * @param promise
  */
-export function promiseTimeout(ms: number, id: number, promise: Promise<any>): Promise<any> {
+export function promiseTimeout(
+  ms: number,
+  id: number,
+  promise: Promise<any>
+): Promise<any> {
   // Create a promise that rejects in <ms> milliseconds
   const timeout = new Promise((resolve, reject) => {
     const timing = setTimeout(() => {
@@ -25,5 +30,5 @@ export function promiseTimeout(ms: number, id: number, promise: Promise<any>): P
  */
 export function promiseWait(ms: number): Promise<void> {
   // if (VERBOSE_LOG) ZM.log("info", "WAITING FOR TIMEOUT");
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
