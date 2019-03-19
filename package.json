@@ -4,9 +4,8 @@
   "description": "Script in Javascript (Node) to download ZeeMaps data",
   "main": "zeemaps.js",
   "scripts": {
-    "ztest": "node ZeeMapsTest.js",
-    "ptest": "node ParallelStream.js",
-    "zmaps": "node zeemaps.js"
+    "tsc": "tsc",
+    "start": "tsc && node ./build/zeemaps.js"
   },
   "author": "Tiger Mou",
   "repository": {
@@ -20,6 +19,14 @@
     "prettier": "^1.16.4",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
+    "typescript": "^3.3.3333",
     "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/cheerio": "^0.22.11",
+    "@types/request-promise": "^4.1.42",
+    "tslint": "^5.14.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.0.1"
   }
 }
