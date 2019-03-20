@@ -13,15 +13,18 @@ export function promiseTimeout(
   promise: Promise<any>
 ): Promise<any> {
   // Create a promise that rejects in <ms> milliseconds
+  let timing: NodeJS.Timer;
   const timeout = new Promise((resolve, reject) => {
-    const timing = setTimeout(() => {
-      clearTimeout(timing);
+    timing = setTimeout(() => {
       reject(`Task: ${id} Timed out in ${ms} ms.`);
     }, ms);
   });
 
   // Returns a race between our timeout and the passed in promise
-  return Promise.race([promise, timeout]);
+  return Promise.race([promise, timeout]).then(result => {
+    clearTimeout(timing);
+    return result;
+  });
 }
 
 /**

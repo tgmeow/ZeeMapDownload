@@ -10,8 +10,8 @@ const ZM = new ZMDownload("output.csv", VERBOSE_LOG);
 let currGroup = 1;
 const MAX_GROUP = 3355100;
 // const MAX_GROUP = 10;
-const CONCUR = 2;
-const DELAY = 600;
+const CONCUR = 1;
+const DELAY = 1500;
 const TASK_TIMEOUT = 30 * 1000; // If task does not complete within 30 sec, skip
 const PRINT_MODULO = 1000;
 
@@ -57,6 +57,10 @@ async function start(id: number): Promise<void> {
     });
 }
 
+/**
+ * Iterative version to run task until it returns a Promise Reject with MAX_GROUP
+ * @param id like thread pid
+ */
 async function startAwait(id: number): Promise<void> {
   let cont = true;
   while (cont) {
@@ -87,6 +91,7 @@ for (let i = 0; i < CONCUR; ++i) {
 // Wait for all promises to resolve or 'join'
 Promise.all(syncs)
   .then(() => {
+    console.info("done!");
     ZM.log("info", "done!");
   })
   .catch(err => {
