@@ -1,5 +1,7 @@
 "use strict";
 
+import { RequestPromise } from "request-promise";
+
 /**
  * Run a Promise that times out in ms milliseconds
  * Big thanks to https://italonascimento.github.io/applying-a-timeout-to-your-promises/
@@ -10,7 +12,7 @@
 export function promiseTimeout(
   ms: number,
   id: number,
-  promise: Promise<any>
+  promise: Promise<any> | RequestPromise
 ): Promise<any> {
   // Create a promise that rejects in <ms> milliseconds
   let timing: NodeJS.Timer;

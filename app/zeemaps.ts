@@ -8,8 +8,8 @@ const VERBOSE_LOG = true; // TODO
 const ZM = new ZMDownload("output.csv", VERBOSE_LOG);
 
 let currGroup = 1;
-const MAX_GROUP = 3355100;
-// const MAX_GROUP = 10;
+// const MAX_GROUP = 3355100;
+const MAX_GROUP = 10;
 const CONCUR = 1;
 const DELAY = 1500;
 const TASK_TIMEOUT = 30 * 1000; // If task does not complete within 30 sec, skip

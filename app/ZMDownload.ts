@@ -4,6 +4,7 @@ import { createObjectCsvWriter } from "csv-writer"; // createObjectCsvWriter;
 import fs from "fs";
 import rp from "request-promise";
 import * as winston from "winston";
+import { promiseTimeout } from "./timeout-promise";
 
 /**
  * Interface for the formatted data
@@ -144,8 +145,9 @@ export default class ZMDownload {
     const PAGE_URL = `https://www.zeemaps.com/map/settings?group=${group}`;
     const MARKER_URL = `https://www.zeemaps.com/emarkers?g=${group}`;
 
-    const pagePromise = rp(PAGE_URL);
-    const markersProm = rp(MARKER_URL);
+    const TIMEOUT1 = 10 * 1000;
+    const pagePromise = promiseTimeout(TIMEOUT1, group, rp(PAGE_URL));
+    const markersProm = promiseTimeout(TIMEOUT1, group, rp(MARKER_URL));
 
     return Promise.all([pagePromise, markersProm])
       .then(async values => {
@@ -159,7 +161,12 @@ export default class ZMDownload {
         //   data.description !== "" ||
         //   markers.length !== 0
         // may write empty lines but that tells us its not private
-        await this.csvWriter.writeRecords([data]);
+        const TIMEOUT2 = 9 * 1000;
+        await promiseTimeout(
+          TIMEOUT2,
+          group,
+          this.csvWriter.writeRecords([data])
+        );
 
         return Promise.resolve(group); // should happen by default but idk bug somewhere
       })
