@@ -10,7 +10,15 @@
     "no-bitwise": true,
     "no-conditional-assignment": true,
     "no-consecutive-blank-lines": false,
-    "no-console": false
+    "no-console": false,
+    "object-literal-sort-keys": false,
+    "no-null-keyword": true,
+    "variable-name": [
+      true,
+      "ban-keywords",
+      "check-format",
+      "allow-leading-underscore"
+    ]
   },
   "jsRules": {
     "max-line-length": {

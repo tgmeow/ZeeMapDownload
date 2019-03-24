@@ -1,17 +1,16 @@
-"use strict";
-
 import { promiseTimeout, promiseWait } from "./timeout-promise";
 import ZMDownload from "./ZMDownload";
 
-const VERBOSE_LOG = true; // TODO
+// const VERBOSE_LOG = true; // TODO
 
-const ZM = new ZMDownload("output.csv", VERBOSE_LOG);
+const ZM = new ZMDownload("output.csv" /* , VERBOSE_LOG */);
 
 let currGroup = 1;
 // const MAX_GROUP = 3355100;
 const MAX_GROUP = 10;
 const CONCUR = 1;
-const DELAY = 1500;
+const DELAY_MUL = 7 * 1000;
+const DELAY_ADD = 5 * 1000;
 const TASK_TIMEOUT = 30 * 1000; // If task does not complete within 30 sec, skip
 const PRINT_MODULO = 1000;
 
@@ -42,20 +41,20 @@ async function task(id: number): Promise<number> {
  * 'Recursively' runs task() using Promises which go into microtasks event queue
  * @returns {Promise<undefined>} Resolved
  */
-async function start(id: number): Promise<void> {
-  return task(id)
-    .then(async () => {
-      // return wait(DELAY).then( () => start()); // ?
-      await promiseWait(DELAY);
-      return start(id);
-    })
-    .catch(err => {
-      if (err !== MAX_GROUP) {
-        ZM.log("error", `ERR: ${err}`);
-      }
-      return Promise.resolve();
-    });
-}
+// async function start(id: number): Promise<void> {
+//   return task(id)
+//     .then(async () => {
+//       // return wait(DELAY).then( () => start()); // ?
+//       await promiseWait(Math.random() * DELAY_MUL + DELAY_ADD);
+//       return start(id);
+//     })
+//     .catch(err => {
+//       if (err !== MAX_GROUP) {
+//         ZM.log("error", `ERR: ${err}`);
+//       }
+//       return Promise.resolve();
+//     });
+// }
 
 /**
  * Iterative version to run task until it returns a Promise Reject with MAX_GROUP
@@ -65,7 +64,7 @@ async function startAwait(id: number): Promise<void> {
   let cont = true;
   while (cont) {
     try {
-      await promiseWait(DELAY);
+      await promiseWait(Math.random() * DELAY_MUL + DELAY_ADD);
       await task(id);
     } catch (err) {
       if (err === MAX_GROUP) {
